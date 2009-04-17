@@ -1275,12 +1275,6 @@ class XMLCoverage < Formatter # :nodoc:
       options = DEFAULT_OPTS.clone.update(opts)
       super(options)
       @dest = options[:destdir]
-      @color = options[:color]
-      @fsr = options[:fsr]
-      @do_callsites = options[:callsites]
-      @do_cross_references = options[:cross_references]
-      @span_class_index = 0
-      @charset = options[:charset]
     end
 
     def execute

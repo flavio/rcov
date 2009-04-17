@@ -1330,7 +1330,8 @@ class XMLCoverage < Formatter # :nodoc:
 
       FileUtils.mkdir_p @dest
       File.open(File.join(@dest, "coverage.xml"),'w') {|file| file.write(summary) }
-      puts "created #{File.join(@dest, "coverage.xml")}"
+
+      puts "View xml report at <file://#{File.join(@dest, "coverage.xml")}>"
     end
 end
 

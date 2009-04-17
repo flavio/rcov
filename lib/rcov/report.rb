@@ -1294,6 +1294,7 @@ class XMLCoverage < Formatter # :nodoc:
         lines_element = Element.new("lines")
         fileinfo.num_lines.times do |i|
             line_element = Element.new("line")
+            line_element.add_attributes( { "number" => i.to_s })
             code = line_element.add_element("code")
             code.text = fileinfo.lines[i].chomp
 

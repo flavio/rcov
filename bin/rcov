@@ -156,6 +156,10 @@ EOF
         options.skip = [ %r!/test/unit/! ]
     end
 
+    opts.on("-X", "--xml-report", "Save detailed report to an xml file.") do
+        options.xml = true
+    end
+ 
     opts.on("-T", "--text-report", "Dump detailed plain-text report to stdout.",
             "(filename, LoC, total lines, coverage)") do
         options.textmode = :report
@@ -374,6 +378,16 @@ if options.html
         formatters << make_formatter[Rcov::HTMLCoverage]
     end
 end
+
+if options.xml
+    if options.profiling
+        #TODO: fixme
+        #formatters << make_formatter[Rcov::HTMLProfiling]
+    else
+        formatters << make_formatter[Rcov::XMLCoverage]
+    end
+end
+
 textual_formatters = {:counts => Rcov::FullTextReport, 
                       :coverage => Rcov::FullTextReport,
                       :gcc => Rcov::FullTextReport,

@@ -1301,14 +1301,14 @@ class XMLCoverage < Formatter # :nodoc:
             count = line_element.add_element("count")
             count.text = fileinfo.counts[i]
 
-            marked = line_element.add_element("marked")
+            status = line_element.add_element("status")
             case fileinfo.coverage[i]
             when true
-              marked.text = "marked"
+              status.text = "covered"
             when :inferred
-              marked.text = "inferred"
+              status.text = "inferred"
             else
-              marked.text = "uncovered"
+              status.text = "uncovered"
             end
 
             lines_element.elements << line_element

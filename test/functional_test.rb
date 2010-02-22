@@ -87,5 +87,10 @@ class TestFunctional < Test::Unit::TestCase
       cmp "diff-gcc-all.out"
     end  
   end
-  
+
+  def test_xml_coverage
+    run_rcov("-X #{@@selection} -o actual_coverage", "assets/sample_04.rb", "") do
+      cmp "coverage.xml"
+    end
+  end
 end

@@ -1,53 +1,29 @@
-require 'rcov/xx'
-require "erb"
-
-class Hash
-  def to_binding(object = Object.new)
-    object.instance_eval("def binding_for(#{keys.join(",")}) binding end")
-    object.binding_for(*values)
-  end
-end
-
-class Document
-  def initialize(template)
-    @template = ERB.new(template)
-  end
-  
-  def interpolate(replacements = {})
-    @template.result(replacements.to_binding)
-  end
-end
-
-module XX
-  module XMLish
-    include Markup
-
-    def xmlish_ *a, &b
-      xx_which(XMLish){ xx_with_doc_in_effect(*a, &b)}
-    end
-  end
-end
-
 module Rcov
-  
   class BaseFormatter # :nodoc:
     require 'pathname'
+    require 'rbconfig'
+    RCOV_IGNORE_REGEXPS = [ /\A#{Regexp.escape(Pathname.new(::RbConfig::CONFIG['libdir']).cleanpath.to_s)}/, 
+                            /\btc_[^.]*.rb/, 
+                            /_test\.rb\z/, 
+                            /\btest\//, 
+                            /\bvendor\//, 
+                            /\A#{Regexp.escape(__FILE__)}\z/
+                          ]
 
-    ignore_files = [/\A#{Regexp.escape(Pathname.new(::Config::CONFIG["libdir"]).cleanpath.to_s)}/,
-                    /\btc_[^.]*.rb/, /_test\.rb\z/, /\btest\//, /\bvendor\//, /\A#{Regexp.escape(__FILE__)}\z/]
-
-    DEFAULT_OPTS = {:ignore => ignore_files, :sort => :name, :sort_reverse => false,
-      :output_threshold => 101, :dont_ignore => [], :callsite_analyzer => nil, :comments_run_by_default => false}
+    DEFAULT_OPTS = { :ignore => RCOV_IGNORE_REGEXPS, :sort => :name, :sort_reverse => false,
+                     :output_threshold => 101, :dont_ignore => [], :callsite_analyzer => nil, \
+                     :comments_run_by_default => false }
 
     def initialize(opts = {})
       options = DEFAULT_OPTS.clone.update(opts)
+      @failure_threshold = options[:failure_threshold]
       @files = {}
       @ignore_files = options[:ignore]
       @dont_ignore_files = options[:dont_ignore]
       @sort_criterium = case options[:sort]
       when :loc then lambda{|fname, finfo| finfo.num_code_lines}
       when :coverage then lambda{|fname, finfo| finfo.code_coverage}
-      else lambda{|fname, finfo| fname}
+      else lambda { |fname, finfo| fname }
       end
       @sort_reverse = options[:sort_reverse]
       @output_threshold = options[:output_threshold]
@@ -131,6 +107,7 @@ module Rcov
     end
 
     private
+    
     def cross_references_for(filename, lineno)
       return nil unless @callsite_analyzer
       @callsite_index ||= build_callsite_index
@@ -193,7 +170,5 @@ module Rcov
         ref_blocks << [refs, label, format_called_ref]
       end
     end
-
   end
-
 end

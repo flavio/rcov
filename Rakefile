@@ -1,7 +1,3 @@
-# This Rakefile serves as an example of how to use Rcov::RcovTask.
-# Take a look at the RDoc documentation (or readme_for_rake) for further
-# information.
-
 $:.unshift "lib" if File.directory? "lib"
 require 'rcov/rcovtask'
 require 'rcov/version'
@@ -47,11 +43,19 @@ desc "Run the unit tests with rcovrt."
 if RUBY_PLATFORM == 'java'
   Rake::TestTask.new(:test_rcovrt => ["lib/rcovrt.jar"]) do |t|
     t.libs << "lib"
+    t.ruby_opts << "--debug"
     t.test_files = FileList['test/*_test.rb']
     t.verbose = true
   end
+
+  file "lib/rcovrt.jar" => FileList["ext/java/**/*.java"] do |t|
+    rm_f "lib/rcovrt.jar"
+    mkdir_p "pkg/classes"
+    sh "javac -classpath #{Java::JavaLang::System.getProperty('java.class.path')} -d pkg/classes #{t.prerequisites.join(' ')}"
+    sh "jar cf #{t.name} -C pkg/classes ."
+  end
 else
-  Rake::TestTask.new(:test_rcovrt => ["ext/rcovrt/rcovrt.so"]) do |t|
+    Rake::TestTask.new(:test_rcovrt => ["ext/rcovrt/rcovrt.so"]) do |t|
     system("cd ext/rcovrt && make clean && rm Makefile")
     t.libs << "ext/rcovrt"
     t.test_files = FileList['test/*_test.rb']
@@ -81,13 +85,19 @@ end
 
 task :default => :test
 
-desc "Generate rdoc documentation for the rcov library"
-Rake::RDocTask.new("rdoc") { |rdoc|
-  rdoc.rdoc_dir = 'doc'
-  rdoc.title    = "rcov"
-  rdoc.options << "--line-numbers" << "--inline-source"
-  rdoc.rdoc_files.include('doc/readme_for_api')
-  rdoc.rdoc_files.include('doc/readme_for_rake')
-  rdoc.rdoc_files.include('doc/readme_for_vim')
+begin
+  %w{sdoc sdoc-helpers rdiscount}.each { |name| gem name }
+  require 'sdoc_helpers'
+rescue LoadError => ex
+  puts "sdoc support not enabled:"
+  puts ex.inspect
+end
+
+require 'rake/rdoctask'
+Rake::RDocTask.new do |rdoc|
+  version = File.exist?('VERSION') ? File.read('VERSION') : ''
+  rdoc.rdoc_dir = 'rdoc'
+  rdoc.title = "rcov #{version}"
+  rdoc.rdoc_files.include('README*')
   rdoc.rdoc_files.include('lib/**/*.rb')
-}
+end

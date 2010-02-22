@@ -1,3 +1,17 @@
+Jay McGaffigan:
+* JRuby support integrated from original rcov4j
+
+Aaron Bedra:
+* major refactoring
+* added threshold testing
+* Took on the task of keeping RCov going
+
+Corey Ehmke (Bantik):
+* redesigned index and detail XHTML
+* added sortable columns in coverage table
+* added file and coverage threshold filters to index XHTML
+* added print-specific style sheet
+* added support for custom CSS for XHTML output
 
 Tom Dolbilin:
  * identified and fixed backslash problem on win32 for generated filenames

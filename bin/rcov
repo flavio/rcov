@@ -6,7 +6,7 @@
 # module COVERAGE__ originally (c) NAKAMURA Hiroshi
 # module PrettyCoverage originally (c) Simon Strandgaard
 #
-# rewritten & extended by Mauricio Fernández <mfp@acm.org>
+# rewritten & extended by Mauricio Fernandez <mfp@acm.org>
 #
 # See LEGAL and LICENSE for additional licensing information.
 #
@@ -399,10 +399,14 @@ if options.html
   end
 end
 
-textual_formatters = { :counts => Rcov::FullTextReport, :coverage => Rcov::FullTextReport,
-                      :gcc => Rcov::FullTextReport, :annotate => Rcov::RubyAnnotation,
-                      :summary => Rcov::TextSummary, :report => Rcov::TextReport,
-                      :coverage_diff => Rcov::TextCoverageDiff, :failure_report => Rcov::FailureReporti,
+textual_formatters = { :counts => Rcov::FullTextReport,
+                      :coverage => Rcov::FullTextReport,
+                      :gcc => Rcov::FullTextReport,
+                      :annotate => Rcov::RubyAnnotation,
+                      :summary => Rcov::TextSummary,
+                      :report => Rcov::TextReport,
+                      :coverage_diff => Rcov::TextCoverageDiff,
+                      :failure_report => Rcov::FailureReport,
                       :xml =>  Rcov::XMLCoverage}
 
 if textual_formatters[options.textmode]
